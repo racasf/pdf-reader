@@ -1,6 +1,3 @@
-import os
-import configparser
-from platformdirs import *
 import config
 
 print(config.initScript)
