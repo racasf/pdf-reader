@@ -11,19 +11,24 @@ APPAUTHOR: str = "RACA Software Factory"
 
 configInput = {
     "origin_directory": "Ingrese el directorio de origen [{}]: ",
-    # "smtp_host": ""
-    # "smtp": {
-    #     "user": "",
-    #     "pass": "",
-    #     "host": "",
-    #     "port": ""
-    # },
-    # "notification_emails": {}
+
+    "email_account": "Ingrese la cuenta de email remitente [{}]: ",
+    "email_password": "Ingrese la contraseña de la cuenta de email remitente [{}]: ",
+    "email_smtp_host": "Ingrese el host SMTP del mail [{}]: ",
+    "email_smtp_port": "Ingrese el puerto SMTP del mail [{}]: ",
+
+    "email_avisos": "Ingrese el email para avisos y notificaciones [{}]: "
 }
 
 config = {
     "origin_directory": "",
-    # "smtp_host": ""
+
+    "email_account": "",
+    "email_password": "",
+    "email_smtp_host": "",
+    "email_smtp_port": "",
+
+    "email_avisos": ""
 }
 
 dataDirectories = {
