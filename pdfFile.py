@@ -1,3 +1,7 @@
+import re
+
+GUIA_REGEXP = "(N° +([A-Z]{3})+[0-9]{5,8})"
+
 class pdfFile:
     def __init__(self, parentFile: str):
         self.parentFile = str
@@ -12,3 +16,11 @@ class pdfFile:
 
     def getSheetNumber(self) -> list:
         return self.sheetsNumber
+
+
+def getGuiaNumber(txt: str):
+    name = ""
+    fnd = re.findall(GUIA_REGEXP, txt)
+    if len(fnd) > 0:
+        name = fnd[0][0]
+    return name
