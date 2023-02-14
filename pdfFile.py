@@ -1,6 +1,6 @@
 import re
 
-GUIA_REGEXP = "(N° +([A-Z]{3})+[0-9]{5,8})"
+GUIA_REGEXP = "(([A-Z8]{3})+([0-9]{5,8}))"
 
 class pdfFile:
     def __init__(self, parentFile: str):

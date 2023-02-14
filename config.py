@@ -33,6 +33,7 @@ config = {
 
 dataDirectories = {
     "user": user_data_dir(APPNAME, APPAUTHOR),
+    "tmp_files": user_data_dir(APPNAME, APPAUTHOR) + "/tmp/",
     "user_cache": user_cache_dir(APPNAME, APPAUTHOR),
     "user_log": user_log_dir(APPNAME, APPAUTHOR),
     "user_docs": user_documents_dir(),

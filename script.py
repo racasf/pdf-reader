@@ -8,6 +8,9 @@ print(config.initScript)
 
 files = getNonProcesedFiles(config.config["origin_directory"])
 
+notification_success = []
+notification_error = []
+
 for parent in files:
     pdf_file = open(parent, "rb")
     pdfReader = PyPDF2.PdfReader(pdf_file)
@@ -18,27 +21,30 @@ for parent in files:
     for i, page in enumerate(pdfReader.pages):
         # si es una guia creamos una nueva clase y cerramos y mergeamos la anterior la anterior
         txt = page.extract_text()
-        pageNumber = i+1
+        pageNumber = i
         guiaNumber = pdfFile.getGuiaNumber(txt)
-
-        if guiaNumber is not "":
-            if currentClass is not "":
+        if guiaNumber != "":
+            if currentClass != "":
                 tmp_files.append(currentClass)
 
+            fileName = config.dataDirectories["tmp_files"] + guiaNumber + ".pdf"
             currentClass = pdfFile.pdfFile(parent)
-            currentClass.setFileName(guiaNumber)
+            currentClass.setFileName(fileName)
 
         currentClass.setSheetNumber(pageNumber)
 
-    if currentClass is not "":
+    if currentClass != "":
         tmp_files.append(currentClass)
 
-    print(len(tmp_files))
-    # analizamos los archivos para crear los pdf files
+    for tf in tmp_files:
+        writer = PyPDF2.PdfWriter()
+        for page in tf.getSheetNumber():
+            writer.add_page(pdfReader.pages[page])
 
-    # creamos los archivos pdf separando del original
+        with open(tf.fileName, 'wb') as file:
+            writer.write(file)
 
-    # cambiamos el nombre del archivo
+    changeToExecuted(parent)
 
 # enviamos los archivos al servidor
 
@@ -54,3 +60,4 @@ for parent in files:
 # msg = mailer.prepareMessage({"Se exportaron 967 archivos"}, {"Fallaron 12"})
 #
 # mailer.sendMail(msg)
+
