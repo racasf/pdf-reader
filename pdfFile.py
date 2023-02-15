@@ -8,7 +8,7 @@ class pdfFile:
         self.fileName = ""
         self.sheetsNumber = []
 
-    def setSheetNumber(self, number: int):
+    def setSheetNumber(self, number):
         self.sheetsNumber.append(number)
 
     def setFileName(self, filename: str):

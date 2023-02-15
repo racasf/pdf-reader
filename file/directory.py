@@ -13,6 +13,21 @@ def getPathWithFile(path: str, file: str) -> str:
         return path + "/" + file
 
 
+def getFilesToSend(path: str):
+    files = []
+
+    for f in os.listdir(path):
+        fname = getPathWithFile(path, f)
+        if re.search("\.pdf", fname) is None:
+            continue
+
+        files.append(fname)
+
+    return files
+
+def deleteFileToSend(file: str):
+    os.remove(file)
+
 def getNonProcesedFiles(path: str):
     files = []
     for f in os.listdir(path):
@@ -31,6 +46,9 @@ def isIgnoredFile(file: str) -> bool:
         return True
 
     if isExecutedFile(file):
+        return True
+
+    if re.search("\.pdf", file) is None:
         return True
     return False
 
@@ -63,3 +81,15 @@ def changeToExecuted(file: str):
 
     os.rename(file, newName)
     return
+
+
+def extractFileName(path: str) -> str:
+    fileName = ""
+    if path == "":
+        return fileName
+
+    txt = path.split("/")
+    txt = txt[len(txt) - 1]
+    fileName = txt
+
+    return fileName

@@ -19,11 +19,11 @@ def validateConfig():
 def prepareMessage(notificaciones: list, errores: list) -> str:
     message = "Subject: PDF Exporter - Avisos y Notificaciones\n\n"
 
-    message += "Notificaciones:\n"
+    message += f'Notificaciones ({len(notificaciones)}):\n'
     for m in notificaciones:
         message += "- {}\n".format(m)
 
-    message += "\nErrores:\n"
+    message += f'\nErrores ({len(errores)}):\n'
     for m in errores:
         message += "- {}\n".format(m)
     return message

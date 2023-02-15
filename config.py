@@ -17,7 +17,12 @@ configInput = {
     "email_smtp_host": "Ingrese el host SMTP del mail [{}]: ",
     "email_smtp_port": "Ingrese el puerto SMTP del mail [{}]: ",
 
-    "email_avisos": "Ingrese el email para avisos y notificaciones [{}]: "
+    "email_avisos": "Ingrese el email para avisos y notificaciones [{}]: ",
+
+    "ftp_host": "Ingrese el host de FTP [{}]: ",
+    "ftp_user": "Ingrese el user para FTP [{}]: ",
+    "ftp_pwd": "Ingrese el pwd para FTP [{}]: ",
+    "ftp_path": "Ingrese el path default para FTP [{}]: "
 }
 
 config = {
@@ -28,7 +33,12 @@ config = {
     "email_smtp_host": "",
     "email_smtp_port": "",
 
-    "email_avisos": ""
+    "email_avisos": "",
+
+    "ftp_host": "",
+    "ftp_user": "",
+    "ftp_pwd": "",
+    "ftp_path": ""
 }
 
 dataDirectories = {
@@ -59,7 +69,7 @@ def createConfigFile():
 def requestData() -> config:
     for x in configInput:
         data = input(configInput[x].format(config[x]))
-        if data is not "":
+        if data != "":
             config[x] = data
 
     return config

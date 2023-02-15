@@ -3,6 +3,7 @@ import mailer
 import PyPDF2
 from file.directory import *
 import pdfFile
+import ftp
 
 print(config.initScript)
 
@@ -12,52 +13,63 @@ notification_success = []
 notification_error = []
 
 for parent in files:
-    pdf_file = open(parent, "rb")
-    pdfReader = PyPDF2.PdfReader(pdf_file)
+    try:
+        pdf_file = open(parent, "rb")
+        pdfReader = PyPDF2.PdfReader(pdf_file)
 
-    tmp_files = []
+        tmp_files = []
 
-    currentClass = ""
-    for i, page in enumerate(pdfReader.pages):
-        # si es una guia creamos una nueva clase y cerramos y mergeamos la anterior la anterior
-        txt = page.extract_text()
-        pageNumber = i
-        guiaNumber = pdfFile.getGuiaNumber(txt)
-        if guiaNumber != "":
-            if currentClass != "":
-                tmp_files.append(currentClass)
+        currentClass = ""
+        for i, page in enumerate(pdfReader.pages):
+            txt = page.extract_text()
+            if txt == "":
+                raise Exception("no pudimos leer el texto del archivo")
 
-            fileName = config.dataDirectories["tmp_files"] + guiaNumber + ".pdf"
-            currentClass = pdfFile.pdfFile(parent)
-            currentClass.setFileName(fileName)
+            pageNumber = i
+            guiaNumber = pdfFile.getGuiaNumber(txt)
+            if guiaNumber != "":
+                if currentClass != "":
+                    tmp_files.append(currentClass)
 
-        currentClass.setSheetNumber(pageNumber)
+                fileName = config.dataDirectories["tmp_files"] + guiaNumber + ".pdf"
+                currentClass = pdfFile.pdfFile(parent)
+                currentClass.setFileName(fileName)
 
-    if currentClass != "":
-        tmp_files.append(currentClass)
 
-    for tf in tmp_files:
-        writer = PyPDF2.PdfWriter()
-        for page in tf.getSheetNumber():
-            writer.add_page(pdfReader.pages[page])
+            currentClass.setSheetNumber(pageNumber)
 
-        with open(tf.fileName, 'wb') as file:
-            writer.write(file)
+        if currentClass != "":
+            tmp_files.append(currentClass)
 
-    changeToExecuted(parent)
+        for tf in tmp_files:
+            writer = PyPDF2.PdfWriter()
+            for page in tf.getSheetNumber():
+                writer.add_page(pdfReader.pages[page])
 
-# enviamos los archivos al servidor
+            with open(tf.fileName, 'wb') as file:
+                writer.write(file)
 
-# iteramos sobre cada archivo
+        changeToExecuted(parent)
+    except Exception as e:
+        notification_error.append(f'{e} [{parent}]')
+        changeToError(parent)
 
-    # enviamos al servidor
+tmpFiles = getFilesToSend(config.dataDirectories["tmp_files"])
+ftpS = ftp.FTPSender(
+    config.config["ftp_host"],
+    config.config["ftp_user"],
+    config.config["ftp_pwd"],
+    config.config["ftp_path"]
+)
 
-    # si se envia lo borramos
+for tf in tmpFiles:
+    error = ftpS.sendFile(tf)
+    if error != "":
+        notification_error.append(error)
 
-    # si no envia lo agregamos al mail
+    notification_success.append(extractFileName(tf))
+    deleteFileToSend(tf)
 
-# enviamos el mail
-# msg = mailer.prepareMessage({"Se exportaron 967 archivos"}, {"Fallaron 12"})
-#
-# mailer.sendMail(msg)
+msg = mailer.prepareMessage(notification_success, notification_error)
+mailer.sendMail(msg)
 
