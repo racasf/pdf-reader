@@ -4,8 +4,10 @@ import PyPDF2
 from file.directory import *
 import pdfFile
 import ftp
+import schedule
+import time
 
-
+@schedule.repeat(schedule.every(5).minutes)
 def main():
     print("ejecutando script")
     files = getNonProcesedFiles(config.config["origin_directory"])
@@ -79,3 +81,8 @@ def main():
     msg = mailer.prepareMessage(notification_success, notification_error)
     mailer.sendMail(msg)
 
+
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
