@@ -1,12 +1,27 @@
+import time
+
 import config
+import schedule
+from script import *
 
 print(config.initScript)
 
-config.createAppDirectories()
+value = input("Presione cualquier tecla + enter para iniciar la configuración o presione enter: ")
 
-config.readConfigFile()
+if value == "":
+    @schedule.repeat(schedule.every(5).minutes)
+    def executeMainFunction():
+        main()
 
-config.requestData()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+else:
+    config.createAppDirectories()
 
-config.writeConfig()
+    config.readConfigFile()
+
+    config.requestData()
+
+    config.writeConfig()
 
