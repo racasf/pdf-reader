@@ -6,14 +6,16 @@ import pdfFile
 import ftp
 import schedule
 from datetime import datetime
+import time
 
 
 timeSchedule = 5
 if config.config["time_schedule"] != "":
-    timeSchedule = config.config["time_schedule"]
+    timeSchedule = int(config.config["time_schedule"])
 
-# @schedule.repeat(schedule.every(timeSchedule).minutes)
-def main():
+
+@schedule.repeat(schedule.every(timeSchedule).minutes)
+def job():
     print("ejecutando script :", datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
     files = getNonProcesedFiles(config.config["origin_directory"])
 
@@ -84,12 +86,12 @@ def main():
     except Exception as e:
         notification_error.append(f'Error al enviar los archivos a ftp: {e}')
 
-    msg = mailer.prepareMessage(notification_success, notification_error)
-    mailer.sendMail(msg)
+    if len(notification_error) > 0 or len(notification_success) > 0:
+        msg = mailer.prepareMessage(notification_success, notification_error)
+        mailer.sendMail(msg)
 
 
-main()
 
-# while True:
-    # schedule.run_pending()
-    # time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
