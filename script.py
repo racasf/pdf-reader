@@ -49,8 +49,10 @@ for parent in files:
             with open(tf.fileName, 'wb') as file:
                 writer.write(file)
 
+        pdf_file.close()
         changeToExecuted(parent)
     except Exception as e:
+        pdf_file.close()
         notification_error.append(f'{e} [{parent}]')
         changeToError(parent)
 
@@ -62,13 +64,16 @@ ftpS = ftp.FTPSender(
     config.config["ftp_path"]
 )
 
-for tf in tmpFiles:
-    error = ftpS.sendFile(tf)
-    if error != "":
-        notification_error.append(error)
+try:
+    for tf in tmpFiles:
+        error = ftpS.sendFile(tf)
+        if error != "":
+            notification_error.append(error)
 
-    notification_success.append(extractFileName(tf))
-    deleteFileToSend(tf)
+        notification_success.append(extractFileName(tf))
+        deleteFileToSend(tf)
+except Exception as e:
+    notification_error.append(f'Error al enviar los archivos a ftp: {e}')
 
 msg = mailer.prepareMessage(notification_success, notification_error)
 mailer.sendMail(msg)

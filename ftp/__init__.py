@@ -43,8 +43,7 @@ class FTPSender:
 
 
         try:
-            sess = ftplib.FTP("192.168.1.18", self.user, self.pwd)
-            # sess.login(self.user,self.pwd)
+            sess = ftplib.FTP(self.host, self.user, self.pwd)
 
             file = open(file, "rb")
 
@@ -54,5 +53,5 @@ class FTPSender:
 
             return ""
         except Exception as i:
-            return "{} [{}]".format(i, file.name)
+            return "{} [{}]".format(i, fileName)
 
