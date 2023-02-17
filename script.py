@@ -5,11 +5,16 @@ from file.directory import *
 import pdfFile
 import ftp
 import schedule
-import time
+from datetime import datetime
 
-@schedule.repeat(schedule.every(5).minutes)
+
+timeSchedule = 5
+if config.config["time_schedule"] != "":
+    timeSchedule = config.config["time_schedule"]
+
+# @schedule.repeat(schedule.every(timeSchedule).minutes)
 def main():
-    print("ejecutando script")
+    print("ejecutando script :", datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
     files = getNonProcesedFiles(config.config["origin_directory"])
 
     notification_success = []
@@ -26,7 +31,7 @@ def main():
             for i, page in enumerate(pdfReader.pages):
                 txt = page.extract_text()
                 if txt == "":
-                    raise Exception("no pudimos leer el texto del archivo")
+                    raise Exception(f'no pudimos leer el texto del archivo en la pagina {i+1}')
 
                 pageNumber = i
                 guiaNumber = pdfFile.getGuiaNumber(txt)
@@ -59,19 +64,20 @@ def main():
             notification_error.append(f'{e} [{parent}]')
             changeToError(parent)
 
-    tmpFiles = getFilesToSend(config.dataDirectories["tmp_files"])
-    ftpS = ftp.FTPSender(
-        config.config["ftp_host"],
-        config.config["ftp_user"],
-        config.config["ftp_pwd"],
-        config.config["ftp_path"]
-    )
-
     try:
+        tmpFiles = getFilesToSend(config.dataDirectories["tmp_files"])
+        ftpS = ftp.FTPSender(
+            config.config["ftp_host"],
+            config.config["ftp_user"],
+            config.config["ftp_pwd"],
+            config.config["ftp_path"]
+        )
+
         for tf in tmpFiles:
             error = ftpS.sendFile(tf)
             if error != "":
                 notification_error.append(error)
+                continue
 
             notification_success.append(extractFileName(tf))
             deleteFileToSend(tf)
@@ -82,7 +88,8 @@ def main():
     mailer.sendMail(msg)
 
 
+main()
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# while True:
+    # schedule.run_pending()
+    # time.sleep(1)

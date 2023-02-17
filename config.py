@@ -3,11 +3,11 @@ import configparser
 from platformdirs import *
 
 initScript = """
-    Developed by RACA Software Factory
+    Developed by CM
 """
 
 APPNAME: str = "pdf-exporter"
-APPAUTHOR: str = "RACA Software Factory"
+APPAUTHOR: str = "CM"
 
 configInput = {
     "origin_directory": "Ingrese el directorio de origen [{}]: ",
@@ -22,7 +22,9 @@ configInput = {
     "ftp_host": "Ingrese el host de FTP [{}]: ",
     "ftp_user": "Ingrese el user para FTP [{}]: ",
     "ftp_pwd": "Ingrese el pwd para FTP [{}]: ",
-    "ftp_path": "Ingrese el path default para FTP [{}]: "
+    "ftp_path": "Ingrese el path default para FTP [{}]: ",
+    
+    "time_schedule": "Tiempo de repetición en minutos [{} minutos]: "
 }
 
 config = {
@@ -38,7 +40,9 @@ config = {
     "ftp_host": "",
     "ftp_user": "",
     "ftp_pwd": "",
-    "ftp_path": ""
+    "ftp_path": "",
+    
+    "time_schedule": ""
 }
 
 dataDirectories = {

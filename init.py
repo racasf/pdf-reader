@@ -8,4 +8,3 @@ config.readConfigFile()
 config.requestData()
 
 config.writeConfig()
-
